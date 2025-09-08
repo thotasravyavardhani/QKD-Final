@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Lab - Professional BB84 Research Platform</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/lab.css">
+    
+    <!-- Tailwind configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1A73E8',
+                        'accent-blue': '#4285F4',
+                        'success-green': '#0F9D58',
+                        'warning-yellow': '#F4B400',
+                        'danger-red': '#DB4437',
+                        'neutral-bg': '#F5F5F5',
+                        'neutral-bg-dark': '#E0E0E0',
+                        'text-primary': '#3C4043'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-bg text-text-primary">
+    
+    {% include 'header.html' %}
+    
+    <!-- Main Lab Interface -->
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex gap-6 h-[calc(100vh-120px)]">
+            
+            <!-- Left Sidebar - Protocol Variants & Settings -->
+            <div class="w-80 bg-white rounded-lg shadow-sm border border-neutral-bg-dark overflow-y-auto">
+                <!-- Protocol Variants -->
+                <div class="p-6 border-b border-neutral-bg-dark">
+                    <h2 class="text-lg font-semibold text-text-primary mb-4">BB84 Protocol Variants</h2>
+                    <div class="space-y-2">
+                        <button class="protocol-variant w-full text-left px-4 py-3 rounded-lg bg-primary-blue text-white font-medium active" data-protocol="standard">
+                            Standard BB84
+                        </button>
+                        <button class="protocol-variant w-full text-left px-4 py-3 rounded-lg bg-neutral-bg hover:bg-neutral-bg-dark transition-colors" data-protocol="decoy">
+                            BB84 with Decoy States
+                        </button>
+                        <button class="protocol-variant w-full text-left px-4 py-3 rounded-lg bg-neutral-bg hover:bg-neutral-bg-dark transition-colors" data-protocol="six-state">
+                            Six-State BB84
+                        </button>
+                        <button class="protocol-variant w-full text-left px-4 py-3 rounded-lg bg-neutral-bg hover:bg-neutral-bg-dark transition-colors" data-protocol="sarg04">
+                            SARG04 Variant
+                        </button>
+                        <button class="protocol-variant w-full text-left px-4 py-3 rounded-lg bg-neutral-bg hover:bg-neutral-bg-dark transition-colors" data-protocol="custom">
+                            Custom Configuration
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Advanced Settings -->
+                <div class="p-6">
+                    <h3 class="text-md font-semibold text-text-primary mb-4">Advanced Settings</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-2 text-sm text-gray-600 hover:text-primary-blue cursor-pointer">
+                            <i data-feather="shield" class="w-4 h-4"></i>
+                            <span>Security Analysis</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-600 hover:text-primary-blue cursor-pointer">
+                            <i data-feather="zap" class="w-4 h-4"></i>
+                            <span>Performance Optimization</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-600 hover:text-primary-blue cursor-pointer">
+                            <i data-feather="download" class="w-4 h-4"></i>
+                            <span>Export Configuration</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="flex-1 overflow-y-auto">
+                <!-- Parameter Controls -->
+                <div class="bg-white rounded-lg shadow-sm border border-neutral-bg-dark p-6 mb-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-semibold text-text-primary">Experiment Parameters</h2>
+                        <button id="runExperimentBtn" class="bg-success-green text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-all duration-300 shadow-lg transform hover:scale-105 flex items-center">
+                            <i data-feather="play" class="w-5 h-5 mr-2"></i>
+                            Run Experiment
+                        </button>
+                    </div>
+                    
+                    <!-- Quantum Channel Parameters -->
+                    <div class="mb-8">
+                        <h3 class="text-md font-semibold text-text-primary mb-4 flex items-center">
+                            <i data-feather="radio" class="w-4 h-4 mr-2 text-primary-blue"></i>
+                            Quantum Channel
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Photon Rate -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Photon Rate (MHz)</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">1</span>
+                                    <input type="range" id="photonRate" min="1" max="100" step="1" value="50" class="flex-1 slider">
+                                    <span class="text-xs text-gray-500">100</span>
+                                </div>
+                                <div class="text-center mt-1">
+                                    <span id="photonRateValue" class="text-sm font-medium text-primary-blue">50 MHz</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Channel Loss -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Channel Loss (dB)</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">0</span>
+                                    <input type="range" id="channelLoss" min="0" max="30" step="0.1" value="10" class="flex-1 slider">
+                                    <span class="text-xs text-gray-500">30</span>
+                                </div>
+                                <div class="text-center mt-1">
+                                    <span id="channelLossValue" class="text-sm font-medium text-primary-blue">10 dB</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Basis Selection Probability -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Basis Selection Probability</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Rectilinear</span>
+                                    <input type="range" id="basisSelection" min="0" max="1" step="0.01" value="0.5" class="flex-1 slider">
+                                    <span class="text-xs text-gray-500">Diagonal</span>
+                                </div>
+                                <div class="text-center mt-1">
+                                    <span id="basisSelectionValue" class="text-sm font-medium text-primary-blue">50%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Security Analysis Parameters -->
+                    <div class="mb-8">
+                        <h3 class="text-md font-semibold text-text-primary mb-4 flex items-center">
+                            <i data-feather="shield" class="w-4 h-4 mr-2 text-danger-red"></i>
+                            Security Analysis
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- QBER Threshold -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">QBER Threshold (%)</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">0</span>
+                                    <input type="range" id="qberThreshold" min="0" max="25" step="0.1" value="11" class="flex-1 slider">
+                                    <span class="text-xs text-gray-500">25</span>
+                                </div>
+                                <div class="text-center mt-1">
+                                    <span id="qberThresholdValue" class="text-sm font-medium text-primary-blue">11%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Eve's Interception Rate -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Eve's Interception Rate</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">0%</span>
+                                    <input type="range" id="eveInterception" min="0" max="100" step="1" value="0" class="flex-1 slider">
+                                    <span class="text-xs text-gray-500">100%</span>
+                                </div>
+                                <div class="text-center mt-1">
+                                    <span id="eveInterceptionValue" class="text-sm font-medium text-primary-blue">0%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Attack Strategy -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Attack Strategy</label>
+                                <select id="attackStrategy" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-blue focus:border-transparent">
+                                    <option value="No Attack">No Attack</option>
+                                    <option value="Intercept-Resend">Intercept-Resend</option>
+                                    <option value="Beam Splitting">Beam Splitting</option>
+                                    <option value="Photon Number Splitting">Photon Number Splitting</option>
+                                    <option value="Trojan Horse Attack">Trojan Horse Attack</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Imperfections Parameters -->
+                    <div class="mb-6">
+                        <h3 class="text-md font-semibold text-text-primary mb-4 flex items-center">
+                            <i data-feather="settings" class="w-4 h-4 mr-2 text-warning-yellow"></i>
+                            System Imperfections
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Detector Efficiency -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Detector Efficiency (%)</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">10</span>
+                                    <input type="range" id="detectorEfficiency" min="10" max="100" step="1" value="85" class="flex-1 slider">
+                                    <span class="text-xs text-gray-500">100</span>
+                                </div>
+                                <div class="text-center mt-1">
+                                    <span id="detectorEfficiencyValue" class="text-sm font-medium text-primary-blue">85%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Dark Count Rate -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Dark Count Rate (Hz)</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">0</span>
+                                    <input type="range" id="darkCountRate" min="0" max="1000" step="10" value="100" class="flex-1 slider">
+                                    <span class="text-xs text-gray-500">1k</span>
+                                </div>
+                                <div class="text-center mt-1">
+                                    <span id="darkCountRateValue" class="text-sm font-medium text-primary-blue">100 Hz</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Polarization Drift -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Polarization Drift (°)</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">0</span>
+                                    <input type="range" id="polarizationDrift" min="0" max="10" step="0.1" value="2" class="flex-1 slider">
+                                    <span class="text-xs text-gray-500">10</span>
+                                </div>
+                                <div class="text-center mt-1">
+                                    <span id="polarizationDriftValue" class="text-sm font-medium text-primary-blue">2°</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lab Simulator Section (Initially Hidden) -->
+                <div id="labSimulatorSection" class="bg-white rounded-lg shadow-sm border border-neutral-bg-dark p-6 mb-6 hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold text-text-primary flex items-center">
+                            <i data-feather="zap" class="w-5 h-5 mr-2 text-success-green"></i>
+                            BB84 Simulation in Progress
+                        </h2>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-2 h-2 bg-success-green rounded-full animate-pulse"></div>
+                                <span class="text-sm text-gray-600">Running</span>
+                            </div>
+                            <button id="stopSimulationBtn" class="text-sm text-danger-red hover:text-red-700 font-medium">Stop</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Simulation Progress -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-gray-700">Simulation Progress</span>
+                            <span id="simulationProgress" class="text-sm text-primary-blue font-semibold">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div id="progressBar" class="bg-gradient-to-r from-primary-blue to-success-green h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Simulation Results Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-blue-50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-primary-blue mb-1" id="simPhotonsSent">0</div>
+                            <div class="text-sm text-gray-600">Photons<br>Transmitted</div>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-success-green mb-1" id="simPhotonsReceived">0</div>
+                            <div class="text-sm text-gray-600">Photons<br>Detected</div>
+                        </div>
+                        <div class="bg-yellow-50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-warning-yellow mb-1" id="simBasisMatches">0</div>
+                            <div class="text-sm text-gray-600">Basis<br>Matches</div>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-purple-600 mb-1" id="simKeyBits">0</div>
+                            <div class="text-sm text-gray-600">Final Key<br>Bits</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Real-time Simulation Log -->
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-3">Simulation Log</h4>
+                        <div id="simulationLog" class="text-xs text-gray-600 font-mono h-32 overflow-y-auto space-y-1">
+                            <!-- Log entries will be added dynamically -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Real-time Results and Circuit Diagram -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Live Experiment Results -->
+                    <div class="bg-white rounded-lg shadow-sm border border-neutral-bg-dark p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary">Live Experiment Results</h3>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-success-green rounded-full animate-pulse"></div>
+                                    <span class="text-sm text-gray-600">Real-time Data</span>
+                                </div>
+                                <button id="pauseBtn" class="text-sm text-gray-600 hover:text-primary-blue">Pause</button>
+                                <button id="exportBtn" class="text-sm text-gray-600 hover:text-primary-blue">Export</button>
+                                <button id="resetBtn" class="text-sm text-gray-600 hover:text-danger-red">Reset</button>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-green-50 rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-success-green mb-1" id="secureKeyRate">2.47</div>
+                                <div class="text-sm text-gray-600">Secure Key Rate<br>(Mbps)</div>
+                                <div class="text-xs text-success-green mt-1">↑ +12% from target</div>
+                            </div>
+                            <div class="bg-yellow-50 rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-warning-yellow mb-1" id="qberRate">8.3%</div>
+                                <div class="text-sm text-gray-600">Quantum Bit Error<br>Rate</div>
+                                <div class="text-xs text-success-green mt-1">✓ Below threshold (11%)</div>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-primary-blue mb-1" id="siftedBits">847K</div>
+                                <div class="text-sm text-gray-600">Sifted Key Bits<br>Last 60 seconds</div>
+                            </div>
+                            <div class="bg-purple-50 rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-purple-600 mb-1" id="securityParam">10⁻⁸</div>
+                                <div class="text-sm text-gray-600">Security Parameter ε<br>Cryptographically secure</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- BB84 Circuit Diagram -->
+                    <div class="bg-white rounded-lg shadow-sm border border-neutral-bg-dark p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary">BB84 Circuit Diagram</h3>
+                            <div class="flex items-center space-x-2">
+                                <i data-feather="download" class="w-4 h-4"></i>
+                                <i data-feather="copy" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="quantum-circuit">
+                            <!-- Alice's side -->
+                            <div class="circuit-node alice">
+                                <div class="node-label">Alice</div>
+                                <div class="quantum-state">|ψ⟩</div>
+                                <div class="basis-indicator rectilinear">|+⟩</div>
+                            </div>
+                            
+                            <!-- Quantum Channel -->
+                            <div class="quantum-channel">
+                                <div class="channel-label">Channel</div>
+                                <div class="photon-animation"></div>
+                                <div class="eve-interference" id="eveNode">
+                                    <span>E</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Bob's side -->
+                            <div class="circuit-node bob">
+                                <div class="node-label">Bob</div>
+                                <div class="measurement">M</div>
+                                <div class="basis-indicator diagonal">|×⟩</div>
+                            </div>
+                            
+                            <!-- Legend -->
+                            <div class="circuit-legend">
+                                <div class="legend-item">
+                                    <div class="color-box prepare"></div>
+                                    <span>Prepare</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="color-box polarize"></div>
+                                    <span>Polarize</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="color-box basis"></div>
+                                    <span>Basis</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="color-box select"></div>
+                                    <span>Select</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="color-box measure"></div>
+                                    <span>Measure</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Security Performance and Statistics -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Security Performance Graph -->
+                    <div class="bg-white rounded-lg shadow-sm border border-neutral-bg-dark p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary">Security Performance</h3>
+                            <div class="text-sm text-gray-600">QBER Key Rate Security</div>
+                        </div>
+                        <div style="height: 200px; max-height: 200px; overflow: hidden;">
+                            <canvas id="securityChart" style="height: 200px !important; max-height: 200px !important;"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Timeline Chart -->
+                    <div class="col-span-1 lg:col-span-2 bg-white rounded-lg shadow-sm border border-neutral-bg-dark p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary">Performance Timeline</h3>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-primary-blue rounded-full animate-pulse"></div>
+                                    <span class="text-sm text-gray-600">Real-time Monitoring</span>
+                                </div>
+                                <select id="timelineRange" class="text-sm border border-gray-300 rounded px-2 py-1">
+                                    <option value="1min">Last 1 min</option>
+                                    <option value="5min" selected>Last 5 min</option>
+                                    <option value="15min">Last 15 min</option>
+                                    <option value="1hour">Last 1 hour</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="relative" style="height: 256px; max-height: 256px; overflow: hidden;">
+                            <canvas id="timelineChart" style="height: 256px !important; max-height: 256px !important;"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Protocol Statistics -->
+                    <div class="bg-white rounded-lg shadow-sm border border-neutral-bg-dark p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-6">Protocol Statistics</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Photons Transmitted</span>
+                                <span class="font-semibold" id="photonsTransmitted">2,847,392</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Detection Efficiency</span>
+                                <span class="font-semibold" id="detectionEfficiency">84.7%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Basis Match Rate</span>
+                                <span class="font-semibold" id="basisMatchRate">48.8%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Privacy Amplification Ratio</span>
+                                <span class="font-semibold" id="privacyAmplification">0.73</span>
+                            </div>
+                        </div>
+                        
+                        <h4 class="text-md font-semibold text-text-primary mt-6 mb-4">System Performance</h4>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Channel Utilization</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-20 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-primary-blue h-2 rounded-full" style="width: 87%" id="channelUtilBar"></div>
+                                    </div>
+                                    <span class="font-semibold text-sm" id="channelUtil">87%</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Processing Latency</span>
+                                <span class="font-semibold" id="processingLatency">2.3 ms</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Memory Usage</span>
+                                <span class="font-semibold" id="memoryUsage">47.2 MB</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Simulation Accuracy</span>
+                                <span class="font-semibold" id="simulationAccuracy">99.97%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Quantum Metrics -->
+                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-200 p-6 mt-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
+                            <i data-feather="cpu" class="w-5 h-5 mr-2 text-purple-600"></i>
+                            Advanced Quantum Metrics
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">Quantum State Fidelity</span>
+                                    <span class="font-semibold text-purple-600" id="quantumStateFidelity">0.9542</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">Decoherence Rate</span>
+                                    <span class="font-semibold text-blue-600" id="decoherenceRate">124.7 ns</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">Privacy Amplification Ratio</span>
+                                    <span class="font-semibold text-green-600" id="privacyAmplificationRatio">0.8571</span>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">Gate Error Rate</span>
+                                    <span class="font-semibold text-red-600" id="gateErrorRate">0.045%</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">Detector Jitter</span>
+                                    <span class="font-semibold text-orange-600" id="detectorJitter">67.3 ps</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">Entanglement Fidelity</span>
+                                    <span class="font-semibold text-indigo-600" id="entanglementFidelity">0.8588</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Metrics Visualization -->
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="text-sm font-semibold text-gray-800 mb-2">Fidelity Over Time</h4>
+                                <div class="h-24">
+                                    <canvas id="fidelityChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="text-sm font-semibold text-gray-800 mb-2">Error Rates</h4>
+                                <div class="h-24">
+                                    <canvas id="errorRatesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Refresh Advanced Metrics Button -->
+                        <div class="mt-4 text-center">
+                            <button id="refreshAdvancedMetrics" class="bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-all duration-200 flex items-center mx-auto">
+                                <i data-feather="refresh-cw" class="w-4 h-4 mr-2"></i>
+                                Refresh Advanced Metrics
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <!-- Collaboration and History -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Active Collaborators -->
+                    <div class="bg-white rounded-lg shadow-sm border border-neutral-bg-dark p-6">
+                        <h4 class="text-md font-semibold text-text-primary mb-4">Active Collaborators</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <span class="text-xs font-semibold text-blue-600">SC</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium">Dr. Sarah Chen</div>
+                                    <div class="text-xs text-gray-500">Adjusting noise parameters</div>
+                                </div>
+                                <div class="w-2 h-2 bg-success-green rounded-full"></div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <span class="text-xs font-semibold text-purple-600">MR</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium">Prof. Michael Rodriguez</div>
+                                    <div class="text-xs text-gray-500">Viewing circuit diagram</div>
+                                </div>
+                                <div class="w-2 h-2 bg-success-green rounded-full"></div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <span class="text-xs font-semibold text-green-600">AT</span>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium">Alex Thompson</div>
+                                    <div class="text-xs text-gray-500">Running noise analysis</div>
+                                </div>
+                                <div class="w-2 h-2 bg-success-green rounded-full"></div>
+                            </div>
+                        </div>
+                        <button class="w-full mt-4 text-sm text-primary-blue border border-primary-blue px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors">
+                            Invite Collaborator
+                        </button>
+                    </div>
+                    
+                    <!-- Community Experiments -->
+                    <div class="bg-white rounded-lg shadow-sm border border-neutral-bg-dark p-6">
+                        <h4 class="text-md font-semibold text-text-primary mb-4">Community Experiments</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="text-sm font-medium">High-Loss BB84 Analysis</div>
+                                <div class="text-xs text-gray-500">by Dr. Emily Watson • 47 runs</div>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <div class="flex text-warning-yellow">
+                                        <span class="text-xs">★ 4.8</span>
+                                    </div>
+                                    <button class="text-xs text-primary-blue hover:underline">Load</button>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium">Decoy-State Optimization</div>
+                                <div class="text-xs text-gray-500">by Quantum Research Lab • 23 runs</div>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <div class="flex text-warning-yellow">
+                                        <span class="text-xs">★ 4.6</span>
+                                    </div>
+                                    <button class="text-xs text-primary-blue hover:underline">Load</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="w-full mt-4 text-sm text-primary-blue border border-primary-blue px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors">
+                            Browse Library
+                        </button>
+                    </div>
+                    
+                    <!-- Experiment History -->
+                    <div class="bg-white rounded-lg shadow-sm border border-neutral-bg-dark p-6">
+                        <h4 class="text-md font-semibold text-text-primary mb-4">Experiment History</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-6 h-6 bg-blue-100 rounded flex items-center justify-center">
+                                    <span class="text-xs font-semibold text-blue-600">v4</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium">Current Version</div>
+                                    <div class="text-xs text-gray-500">Modified noise parameters</div>
+                                </div>
+                                <div class="text-xs text-gray-500">2m ago</div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
+                                    <span class="text-xs font-semibold text-gray-600">v2</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium">Baseline Configuration</div>
+                                    <div class="text-xs text-gray-500">Standard BB84 setup</div>
+                                </div>
+                                <div class="text-xs text-gray-500">1h ago</div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
+                                    <span class="text-xs font-semibold text-gray-600">v1</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium">Initial Setup</div>
+                                    <div class="text-xs text-gray-500">Template configuration</div>
+                                </div>
+                                <div class="text-xs text-gray-500">3h ago</div>
+                            </div>
+                        </div>
+                        <button class="w-full mt-4 text-sm text-primary-blue border border-primary-blue px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors">
+                            Compare Versions
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="/static/lab.js"></script>
+    <script>
+        // Initialize Feather Icons
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+            initLab();
+        });
+    </script>
+</body>
+</html>

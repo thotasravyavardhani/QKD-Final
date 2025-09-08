@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS for QuantumBB84 - Professional QKD Platform */
+/* Google Cloud-Inspired Design System */
+
+:root {
+    --primary-blue: #1A73E8;
+    --accent-blue: #4285F4;
+    --success-green: #0F9D58;
+    --warning-yellow: #F4B400;
+    --danger-red: #DB4437;
+    --neutral-bg: #F5F5F5;
+    --neutral-bg-dark: #E0E0E0;
+    --text-primary: #3C4043;
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+}

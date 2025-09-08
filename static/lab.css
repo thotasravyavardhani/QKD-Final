@@ -1,0 +1,487 @@
+/* Lab-specific styles */
+
+/* Slider customization */
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: #E0E0E0;
+    outline: none;
+    transition: background 0.3s;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #1A73E8;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    background: #4285F4;
+    transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #1A73E8;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Protocol variant buttons */
+.protocol-variant {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.protocol-variant.active {
+    border-color: #1A73E8;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+.protocol-variant:not(.active):hover {
+    background-color: #F5F5F5;
+    border-color: #E0E0E0;
+}
+
+/* Quantum circuit diagram */
+.quantum-circuit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+    border-radius: 12px;
+    position: relative;
+    min-height: 200px;
+}
+
+.circuit-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 80px;
+    transition: all 0.3s ease;
+}
+
+.circuit-node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.circuit-node.alice {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+}
+
+.circuit-node.bob {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+}
+
+.node-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3C4043;
+    margin-bottom: 8px;
+}
+
+.quantum-state {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1A73E8;
+    margin-bottom: 4px;
+}
+
+.measurement {
+    font-size: 18px;
+    font-weight: bold;
+    color: #9C27B0;
+    margin-bottom: 4px;
+}
+
+.basis-indicator {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.basis-indicator.rectilinear {
+    background: rgba(26, 115, 232, 0.1);
+    color: #1A73E8;
+}
+
+.basis-indicator.diagonal {
+    background: rgba(156, 39, 176, 0.1);
+    color: #9C27B0;
+}
+
+/* Quantum channel */
+.quantum-channel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin: 0 20px;
+}
+
+.channel-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.quantum-channel::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1A73E8, #4285F4, #9C27B0);
+    border-radius: 2px;
+    transform: translateY(-50%);
+}
+
+.photon-animation {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(circle, #FFD700 0%, #FFA500 70%);
+    border-radius: 50%;
+    transform: translateY(-50%);
+    animation: photonTravel 2s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+@keyframes photonTravel {
+    0% { left: 0; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: calc(100% - 12px); opacity: 0; }
+}
+
+.eve-interference {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    background: #DB4437;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 0 12px rgba(219, 68, 55, 0.4);
+}
+
+.eve-interference.active {
+    opacity: 1;
+    animation: eveIntercept 1s ease-in-out infinite;
+}
+
+@keyframes eveIntercept {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.2); }
+}
+
+/* Circuit legend */
+.circuit-legend {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: #666;
+}
+
+.color-box {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.color-box.prepare { background: #1A73E8; }
+.color-box.polarize { background: #4285F4; }
+.color-box.basis { background: #0F9D58; }
+.color-box.select { background: #F4B400; }
+.color-box.measure { background: #9C27B0; }
+
+/* Real-time data cards */
+.data-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.data-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.data-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.data-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.data-trend {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.trend-up { color: #0F9D58; }
+.trend-down { color: #DB4437; }
+.trend-neutral { color: #666; }
+
+/* Progress bars */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #E0E0E0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1A73E8, #4285F4);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+/* Status indicators */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.status-secure {
+    background: rgba(15, 157, 88, 0.1);
+    color: #0F9D58;
+}
+
+.status-warning {
+    background: rgba(244, 180, 0, 0.1);
+    color: #F4B400;
+}
+
+.status-danger {
+    background: rgba(219, 68, 55, 0.1);
+    color: #DB4437;
+}
+
+/* Collaboration avatars */
+.collaborator-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    position: relative;
+}
+
+.collaborator-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.collaborator-avatar.online::after {
+    background: #0F9D58;
+}
+
+.collaborator-avatar.away::after {
+    background: #F4B400;
+}
+
+/* Chart containers */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+}
+
+/* Performance timeline */
+.timeline-container {
+    position: relative;
+    height: 200px;
+    margin-top: 20px;
+}
+
+/* Animation utilities */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .quantum-circuit {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .quantum-channel {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .quantum-channel::before {
+        height: 3px;
+        width: 3px;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        background: linear-gradient(180deg, #1A73E8, #4285F4, #9C27B0);
+    }
+    
+    .photon-animation {
+        animation: photonTravelVertical 2s ease-in-out infinite;
+    }
+    
+    @keyframes photonTravelVertical {
+        0% { top: 0; opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { top: calc(100% - 12px); opacity: 0; }
+    }
+}
+
+@media (max-width: 768px) {
+    .circuit-node {
+        min-width: 60px;
+        padding: 12px;
+    }
+    
+    .quantum-state,
+    .measurement {
+        font-size: 16px;
+    }
+    
+    .data-value {
+        font-size: 20px;
+    }
+}
+
+/* Loading states */
+.loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Error states */
+.error-state {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+}
+
+.error-state i {
+    color: #DB4437;
+    margin-bottom: 10px;
+}
+
+/* Success states */
+.success-state {
+    padding: 20px;
+    text-align: center;
+    color: #0F9D58;
+}
+
+/* Quantum-specific animations */
+.quantum-entanglement {
+    position: relative;
+    overflow: hidden;
+}
+
+.quantum-entanglement::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(26, 115, 232, 0.1), transparent);
+    animation: entanglementWave 3s infinite;
+}
+
+@keyframes entanglementWave {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
